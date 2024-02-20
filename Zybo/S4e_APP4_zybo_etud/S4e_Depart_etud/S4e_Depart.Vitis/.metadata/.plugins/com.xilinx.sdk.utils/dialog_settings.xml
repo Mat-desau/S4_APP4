@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<item key="scw_hwspec" value="C:\Users\jbm\Desktop\mat_pedago\S4e_APP4\S4e_Depart"/>
+	<item key="fpga_elf_mem_selection" value="C:\Users\jbm\Desktop\mat_pedago\S4e_APP4\S4e_Depart\S4e_Depart.Vitis\S4e_code\Debug"/>
+	<item key="bootgen_files_selection" value="C:\Users\jbm\Desktop\mat_pedago\S4e_APP4\S4e_Depart\S4e_Depart.Vitis\Boot_Image"/>
+	<item key="soc_flash_files_selection" value="C:\Users\jbm\Desktop\mat_pedago\S4e_APP4\S4e_Depart\S4e_Depart.Vitis\Boot_Image"/>
+	<item key="scw_hwspec_file_selection" value="C:\Users\jbm\Desktop\mat_pedago\S4e_APP4\S4e_Depart_etud"/>
+</section>

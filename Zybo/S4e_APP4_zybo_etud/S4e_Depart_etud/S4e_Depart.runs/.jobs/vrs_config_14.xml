@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<Runs Version="1" Minor="0">
+	<Run Id="main_design_microblaze_0_axi_intc_0_synth_1" LaunchDir="/mnt/home/usager/labm1507/Clean_APP/S4e_APP4_zybo_etud/S4e_Depart_etud/S4e_Depart.runs/main_design_microblaze_0_axi_intc_0_synth_1" FlowId="Vivado_Synthesis" FromStepId="vivado" ToStepId="vivado"/>
+	<Run Id="main_design_axi_quad_spi_0_0_synth_1" LaunchDir="/mnt/home/usager/labm1507/Clean_APP/S4e_APP4_zybo_etud/S4e_Depart_etud/S4e_Depart.runs/main_design_axi_quad_spi_0_0_synth_1" FlowId="Vivado_Synthesis" FromStepId="vivado" ToStepId="vivado"/>
+	<Run Id="synth_1" LaunchDir="/mnt/home/usager/labm1507/Clean_APP/S4e_APP4_zybo_etud/S4e_Depart_etud/S4e_Depart.runs/synth_1" FlowId="Vivado_Synthesis" FromStepId="vivado" ToStepId="vivado">
+		<Parent Id="main_design_microblaze_0_axi_intc_0_synth_1"/>
+		<Parent Id="main_design_axi_quad_spi_0_0_synth_1"/>
+	</Run>
+	<Run Id="impl_1" LaunchDir="/mnt/home/usager/labm1507/Clean_APP/S4e_APP4_zybo_etud/S4e_Depart_etud/S4e_Depart.runs/impl_1" FlowId="Vivado_Implementation" FromStepId="init_design" ToStepId="write_bitstream">
+		<Parent Id="synth_1"/>
+		<Parent Id="main_design_microblaze_0_axi_intc_0_synth_1"/>
+		<Parent Id="main_design_axi_quad_spi_0_0_synth_1"/>
+	</Run>
+	<Parameters>
+		<Parameter Name="runs.monitorLSFJobs" Val="true" Type="bool"/>
+		<Parameter Name="runs.enableClusterConf" Val="true" Type="bool"/>
+	</Parameters>
+</Runs>
+

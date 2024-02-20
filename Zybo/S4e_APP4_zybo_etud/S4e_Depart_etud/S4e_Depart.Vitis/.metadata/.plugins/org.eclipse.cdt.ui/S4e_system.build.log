@@ -1,0 +1,6 @@
+13:15:26 **** Build of configuration Debug for project S4e_system ****
+make -k -j8 all 
+Skipping SD card image generation. Reason: "The system project only has applications for microblaze processors."
+
+13:15:26 Build Finished (took 124ms)
+
