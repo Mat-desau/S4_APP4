@@ -114,7 +114,7 @@ static void LedTask(void)
     }  
 }
 
-//static void __ISR(_INPUT_CAPTURE_4_VECTOR) ACLISR(void) 
+//void __ISR(_INPUT_CAPTURE_4_IRQ) ACLISR(void) 
 //{ 
 //    IFS0bits.INT4IF = 0;
 //    accel_data_ready = true; 
@@ -128,7 +128,7 @@ void Interupt_ACL_Init(void)
     IPC4bits.INT4IP = 1;
     IPC4bits.INT4IS = 0;
     INTCONbits.INT4EP = 0;
-    INT4Rbits = 12;
+    INT4Rbits.INT4R = 4;    //assigner le Interupt au boutton C, quand ca va être ok mettre 12
 }
 
 static bool sw0_old; 
@@ -168,11 +168,13 @@ void RGB_Task()
 
 void MAIN_Initialize ( void )
 {
+     
     /* Place the App state machine in its initial state. */
     mainData.state = MAIN_STATE_INIT;
 
     mainData.handleUSART0 = DRV_HANDLE_INVALID;
 
+    
     UDP_Initialize(); // Initialisation de du serveur et client UDP
     LCD_Init(); // Initialisation de l'écran LCD
     ACL_Init(); // Initialisation de l'accéléromètre
