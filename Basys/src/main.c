@@ -106,13 +106,30 @@ MAIN_DATA mainData;
  Fonction qui fait clignoter une LED la LED1 à chaque 20000 execution du code
  */
 static unsigned long int counter=0;
-static void LedTask(void) {
+static void LedTask(void) 
+{
     if(counter++ == 20000){
         LED_ToggleValue(1);
         counter = 0;
     }  
 }
 
+//static void __ISR(_INPUT_CAPTURE_4_VECTOR) ACLISR(void) 
+//{ 
+//    IFS0bits.INT4IF = 0;
+//    accel_data_ready = true; 
+//}
+
+
+void Interupt_ACL_Init(void)
+{
+    IFS0bits.INT4IF = 0;
+    IEC0bits.INT4IE = 1;
+    IPC4bits.INT4IP = 1;
+    IPC4bits.INT4IS = 0;
+    INTCONbits.INT4EP = 0;
+    INT4Rbits = 12;
+}
 
 static bool sw0_old; 
 void ManageSwitches()
@@ -160,6 +177,7 @@ void MAIN_Initialize ( void )
     LCD_Init(); // Initialisation de l'écran LCD
     ACL_Init(); // Initialisation de l'accéléromètre
     SSD_Init(); // Initialisation du Timer4 et de l'accéléromètre
+    Interupt_ACL_Init(); //Initialisation de l'interuption de l'accéléromètre
 
 }
 

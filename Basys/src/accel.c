@@ -102,6 +102,7 @@ void ACL_ConfigurePins()
 
 uint16_t count= 0;
 
+
 void accel_tasks()
 {
     if(accel_data_ready)
