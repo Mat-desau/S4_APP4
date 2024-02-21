@@ -122,7 +122,7 @@ void Interupt_ACL_Init(void)
     IPC4bits.INT4IP = 1;
     IPC4bits.INT4IS = 0;
     INTCONbits.INT4EP = 0;
-    INT4Rbits.INT4R = 4;    //assigner le Interupt au boutton C en mettant 4, quand ca va être ok mettre 12
+    INT4Rbits.INT4R = 12;    //assigner le Interupt au boutton C en mettant 4, quand ca va être ok mettre 12
 }
 
 static bool sw0_old; 
@@ -141,6 +141,7 @@ void ManageSwitches()
 
 void RGB_Task()
 {
+    RGBLED_SetValue((MoyenneX/2096)*255, (MoyenneY/2096)*255, (MoyenneZ/2096)*255);
     //Vous devez coder une fonction qui utilise les valeur des moyennes calculé 
     //et faire varier la couleur de la RGB. 
 }
