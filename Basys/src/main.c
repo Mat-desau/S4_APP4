@@ -114,12 +114,6 @@ static void LedTask(void)
     }  
 }
 
-//void __ISR(_INPUT_CAPTURE_4_IRQ) ACLISR(void) 
-//{ 
-//    IFS0bits.INT4IF = 0;
-//    accel_data_ready = true; 
-//}
-
 
 void Interupt_ACL_Init(void)
 {
@@ -128,7 +122,7 @@ void Interupt_ACL_Init(void)
     IPC4bits.INT4IP = 1;
     IPC4bits.INT4IS = 0;
     INTCONbits.INT4EP = 0;
-    INT4Rbits.INT4R = 4;    //assigner le Interupt au boutton C, quand ca va être ok mettre 12
+    INT4Rbits.INT4R = 4;    //assigner le Interupt au boutton C en mettant 4, quand ca va être ok mettre 12
 }
 
 static bool sw0_old; 
@@ -180,6 +174,7 @@ void MAIN_Initialize ( void )
     ACL_Init(); // Initialisation de l'accéléromètre
     SSD_Init(); // Initialisation du Timer4 et de l'accéléromètre
     Interupt_ACL_Init(); //Initialisation de l'interuption de l'accéléromètre
+    Init_GestionDonnees();
 
 }
 

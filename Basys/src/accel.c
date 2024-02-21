@@ -26,6 +26,7 @@
 /* Section: Included Files                                                    */
 /* ************************************************************************** */
 #include <xc.h>
+#include <string.h>
 #include <sys/attribs.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -58,6 +59,19 @@ float fGRangeLSB;   // global variable used to pre-compute the value in g corres
 **          
 */
 uint8_t accel_buffer[accel_buf_length]; //the buffer for reading the acceleration values
+
+int MoyenneX = 0;
+int MoyenneY = 0;
+int MoyenneZ = 0;
+
+
+char accel_tableau_X[160];
+char accel_tableau_Y[160];
+char accel_tableau_Z[160];
+int accel_tableau_int_X[40];
+int accel_tableau_int_Y[40];
+int accel_tableau_int_Z[40];
+char Tram_Send[4];
 bool accel_data_ready; //a flag!
 
 /*
@@ -75,7 +89,7 @@ void ACL_Init()
     ACL_SetRegister(ACL_CTRL_REG4, 1);        
     ACL_SetRegister(ACL_CTRL_REG5, 0);        
     ACL_GetRegister(ACL_INT_SOURCE);
-    ACL_SetRegister(ACL_CTRL_REG1, 0x39);
+    ACL_SetRegister(ACL_CTRL_REG1, 0x39); 
 }
 
 /* ------------------------------------------------------------ */
@@ -101,7 +115,100 @@ void ACL_ConfigurePins()
 }
 
 uint16_t count= 0;
+uint16_t count_send = 0;
+uint16_t count_8 = 0;
+uint16_t count_40 = 0;
+uint16_t count_tableau = 0;
 
+void Init_GestionDonnees()
+{
+    memset(accel_tableau_X, '0', sizeof(accel_tableau_X));
+    memset(accel_tableau_Y, '0', sizeof(accel_tableau_X));
+    memset(accel_tableau_Z, '0', sizeof(accel_tableau_X));
+    memset(accel_tableau_int_X, 0, sizeof(accel_tableau_int_X));
+    memset(accel_tableau_int_Y, 0, sizeof(accel_tableau_int_Y));
+    memset(accel_tableau_int_Z, 0, sizeof(accel_tableau_int_Z));
+    
+}
+
+void GestionDonnees()
+{
+    signed int accelX2, accelY2, accelZ2; 
+    accelX2 = ((signed int) accel_buffer[0]<<24)>>20  | accel_buffer[1] >> 4; //VR
+    accelY2 = ((signed int) accel_buffer[2]<<24)>>20  | accel_buffer[3] >> 4; //VR
+    accelZ2 = ((signed int) accel_buffer[4]<<24)>>20  | accel_buffer[5] >> 4; //VR
+    
+    accel_tableau_int_X[count_40] = accelX2;
+    accel_tableau_int_Y[count_40] = accelY2;
+    accel_tableau_int_Z[count_40] = accelZ2;
+    count_40++;
+    count_8++;
+    
+    int i = count_8;
+    int NombreX = 0;
+    int NombreY = 0;
+    int NombreZ = 0;
+    
+    for(i; i < (count_8+8); i++)
+    {
+        NombreX = NombreX + accel_tableau_int_X[i];
+        NombreY = NombreY + accel_tableau_int_Y[i];
+        NombreZ = NombreZ + accel_tableau_int_Z[i];
+    }
+    
+    MoyenneX = (NombreX + MoyenneX)/9;
+    MoyenneY = (NombreY + MoyenneY)/9;
+    MoyenneZ = (NombreZ + MoyenneZ)/9;
+    
+    accel_tableau_X[count_tableau] = (accelX2 >> 24);
+    accel_tableau_Y[count_tableau] = (accelY2 >> 24);
+    accel_tableau_Z[count_tableau] = (accelZ2 >> 24);
+    
+    accel_tableau_X[count_tableau+1] = ((accelX2 << 8) >> 24);
+    accel_tableau_Y[count_tableau+1] = ((accelY2 << 8) >> 24);
+    accel_tableau_Z[count_tableau+1] = ((accelZ2 << 8) >> 24);
+    
+    accel_tableau_X[count_tableau+2] = ((accelX2 << 16) >> 24);
+    accel_tableau_Y[count_tableau+2] = ((accelY2 << 16) >> 24);
+    accel_tableau_Z[count_tableau+2] = ((accelZ2 << 16) >> 24);
+    
+    accel_tableau_X[count_tableau+3] = ((accelX2 << 24) >> 24);
+    accel_tableau_Y[count_tableau+3] = ((accelY2 << 24) >> 24);
+    accel_tableau_Z[count_tableau+3] = ((accelZ2 << 24) >> 24);
+    
+    count_tableau = count_tableau + 4;
+    
+    //Send les valeur à chaque changement
+    count_send++;
+    Tram_Send[0] = count_send >> 24 & 0xFF;
+    Tram_Send[1] = count_send >> 16 & 0xFF;
+    Tram_Send[2] = count_send >> 8 & 0xFF;
+    Tram_Send[3] = count_send & 0xFF;
+
+    strcpy(UDP_Send_Buffer, Tram_Send);
+    strcpy(UDP_Send_Buffer+4, accel_tableau_X);
+    strcpy(UDP_Send_Buffer+164, accel_tableau_Y);
+    strcpy(UDP_Send_Buffer+324, accel_tableau_Z);
+    
+    
+    UDP_Send_Packet = true;
+    
+    if(count_8 == 31)
+    {
+        count_8 = 0;
+    }
+    
+    if(count_40 == 40)
+    {
+        count_40 = 0;
+    }
+    
+    if(count_tableau == 160)
+    {
+        count_tableau = 0;
+    }
+    
+}
 
 void accel_tasks()
 {
@@ -109,21 +216,29 @@ void accel_tasks()
     {
         //ACL_ReadRawValues(accel_buffer);
 
-    if(SWITCH1StateGet())
-    {
-    	signed short accelX, accelY, accelZ; 
-    	accelX = ((signed int) accel_buffer[0]<<24)>>20  | accel_buffer[1] >> 4; //VR
-    	accelY = ((signed int) accel_buffer[2]<<24)>>20  | accel_buffer[3] >> 4; //VR
-    	accelZ = ((signed int) accel_buffer[4]<<24)>>20  | accel_buffer[5] >> 4; //VR
-        SYS_CONSOLE_PRINT("%d,%d,%d\r\n", accelX, accelY, accelZ);
-    }     
-        char outbuf[80];
-        sprintf(outbuf, "X: %02x%01x", accel_buffer[0], accel_buffer[1] >> 4);
-        LCD_WriteStringAtPos(outbuf, 0, 0);
-        sprintf(outbuf, "Y: %02x%01x Z: %02x%01x", accel_buffer[2], accel_buffer[3] >> 4, accel_buffer[4], accel_buffer[5] >> 4);
-        LCD_WriteStringAtPos(outbuf, 1, 0);
-        SSD_WriteDigitsGrouped(count++, 0x1);
-        accel_data_ready = false;
+        if(SWITCH1StateGet())
+        {
+            signed short accelX, accelY, accelZ; 
+            accelX = ((signed int) accel_buffer[0]<<24)>>20  | accel_buffer[1] >> 4; //VR
+            accelY = ((signed int) accel_buffer[2]<<24)>>20  | accel_buffer[3] >> 4; //VR
+            accelZ = ((signed int) accel_buffer[4]<<24)>>20  | accel_buffer[5] >> 4; //VR
+            SYS_CONSOLE_PRINT("%d,%d,%d\r\n", accelX, accelY, accelZ);
+        }   
+        
+    char outbuf[80];
+    sprintf(outbuf, "X: %02x%01x", accel_buffer[0], accel_buffer[1] >> 4);
+    LCD_WriteStringAtPos(outbuf, 0, 0);
+    sprintf(outbuf, "Y: %02x%01x Z: %02x%01x", accel_buffer[2], accel_buffer[3] >> 4, accel_buffer[4], accel_buffer[5] >> 4);
+    LCD_WriteStringAtPos(outbuf, 1, 0);
+    SSD_WriteDigitsGrouped(count++, 0x1);
+    
+    GestionDonnees();
+    
+    accel_data_ready = false;
+    
+    
+    
+    
     }
 }
 
