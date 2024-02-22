@@ -63,6 +63,13 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #include "accel.h"
 #include "lcd.h"
 #include "app_commands.h"
+
+
+//Moyenne est faite direct sur la MX3 (GestionMoyenne dans accel.c)
+//La switch qui fait afficher Moyenne sur le LCD dans accel.C
+
+
+
 // *****************************************************************************
 // *****************************************************************************
 // Section: Global Data Definitions
@@ -116,7 +123,6 @@ static void LedTask(void)
     }  
 }
 
-
 void Interupt_ACL_Init(void)
 {
     IFS0bits.INT4IF = 0;
@@ -143,41 +149,15 @@ void ManageSwitches()
 
 void RGB_Task()
 {
-    Intense[0] = (MoyenneX*255)/2096;
-    Intense[1] = (MoyenneY*255)/2096;
-    Intense[2] = (MoyenneZ*255)/2096;
-    
-    if(Intense[0] <= 0)
-    {
-        Intense[0] = Last_Intense[0];
-    }
-    else
-    {
-      Last_Intense[0] = Intense[0];  
-    }
-    
-    if(Intense[1] <= 0)
-    {
-        Intense[1] = Last_Intense[1];
-    }
-    else
-    {
-      Last_Intense[0] = Intense[0];  
-    }
-    
-    if(Intense[2] <= 0)
-    {
-        Intense[2] = Last_Intense[2];
-    }
-    else
-    {
-      Last_Intense[0] = Intense[0];  
-    }
-            
-    RGBLED_SetValue(Intense[0], Intense[1], Intense[2]);
-    
-    //Vous devez coder une fonction qui utilise les valeur des moyennes calculé 
-    //et faire varier la couleur de la RGB. 
+    //if(timer_1m) {               // Interruption à chaque 1 ms
+        //timer_1m = 0;            // Reset the compteur to capture the next event
+        //Toute pour la Moyenne fait directement dans la MX3 avec la fonction GestionMoyenne dans accel.c
+        Intense[0] = abs((MoyenneX*255)/2096);
+        Intense[1] = abs((MoyenneY*255)/2096);
+        Intense[2] = abs((MoyenneZ*255)/2096);
+
+        RGBLED_SetValue(Intense[0], Intense[1], Intense[2]); 
+    //}
 }
 
 
@@ -203,7 +183,6 @@ void MAIN_Initialize ( void )
 
     mainData.handleUSART0 = DRV_HANDLE_INVALID;
 
-    
     UDP_Initialize(); // Initialisation de du serveur et client UDP
     LCD_Init(); // Initialisation de l'écran LCD
     ACL_Init(); // Initialisation de l'accéléromètre
@@ -211,6 +190,9 @@ void MAIN_Initialize ( void )
     Interupt_ACL_Init(); //Initialisation de l'interuption de l'accéléromètre
     RGBLED_Init();
     Init_GestionDonnees();
+    //initialize_timer_interrupt();
+    //macro_enable_interrupts();
+    
 }
 
 

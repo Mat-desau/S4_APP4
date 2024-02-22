@@ -5,15 +5,17 @@
         <group>
             <file>file:/Users/francoisdesautels/Documents/GitHub/S4_APP4/Basys/src/accel.c</file>
             <file>file:/Users/francoisdesautels/Documents/GitHub/S4_APP4/Basys/src/i2c.c</file>
-            <file>file:/Users/francoisdesautels/Documents/GitHub/S4_APP4/Basys/src/system_config/default/framework/system/console/src/sys_console.c</file>
             <file>file:/Users/francoisdesautels/Documents/GitHub/S4_APP4/Basys/src/ssd.c</file>
-            <file>file:/Users/francoisdesautels/Documents/GitHub/S4_APP4/Basys/src/system_config/default/system_interrupt.c</file>
-            <file>file:/Users/francoisdesautels/Documents/GitHub/S4_APP4/Basys/src/system_config/default/system_tasks.c</file>
+            <file>file:/Users/francoisdesautels/Documents/GitHub/S4_APP4/Basys/src/system_config/default/system_config.h</file>
             <file>file:/Users/francoisdesautels/Documents/GitHub/S4_APP4/Basys/src/main.c</file>
             <file>file:/Users/francoisdesautels/Documents/GitHub/S4_APP4/Basys/src/app_commands.h</file>
             <file>file:/Users/francoisdesautels/Documents/GitHub/S4_APP4/Basys/src/accel.h</file>
             <file>file:/Users/francoisdesautels/Documents/GitHub/S4_APP4/Basys/src/app_commands.c</file>
             <file>file:/Users/francoisdesautels/Documents/GitHub/S4_APP4/Basys/S4e_Depart_etud.X/rgbled.c</file>
+            <file>file:/Users/francoisdesautels/Documents/GitHub/S4_APP4/Basys/src/lcd.c</file>
+            <file>file:/Users/francoisdesautels/Documents/GitHub/S4_APP4/Basys/src/system_config/default/framework/system/console/src/sys_console.c</file>
+            <file>file:/Users/francoisdesautels/Documents/GitHub/S4_APP4/Basys/src/system_config/default/system_interrupt.c</file>
+            <file>file:/Users/francoisdesautels/Documents/GitHub/S4_APP4/Basys/src/system_config/default/system_tasks.c</file>
         </group>
     </open-files>
 </project-private>
