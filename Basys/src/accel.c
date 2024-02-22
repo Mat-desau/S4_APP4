@@ -42,7 +42,10 @@
 
 
 float fGRangeLSB;   // global variable used to pre-compute the value in g corresponding to each count of the raw value
-
+int Total_x[40];    // Message en X a envoyer
+int Total_y[40];    // Message en Y a envoyé
+int Total_z[40];    // Message en Z a envoyé
+int i=0;
 /* ------------------------------------------------------------ */
 /***	ACL_Init
 **
@@ -104,6 +107,7 @@ uint16_t count= 0;
 
 void accel_tasks()
 {
+    
     if(accel_data_ready)
     {
         //ACL_ReadRawValues(accel_buffer);
@@ -115,7 +119,52 @@ void accel_tasks()
     	accelY = ((signed int) accel_buffer[2]<<24)>>20  | accel_buffer[3] >> 4; //VR
     	accelZ = ((signed int) accel_buffer[4]<<24)>>20  | accel_buffer[5] >> 4; //VR
         SYS_CONSOLE_PRINT("%d,%d,%d\r\n", accelX, accelY, accelZ);
-    }     
+    }   
+    if (accel_buffer[0]>=128){
+        Total_x[i] = accel_buffer[0];
+        Total_x[i] = Total_x[i] << 8;
+        Total_x[i] = Total_x[i] | accel_buffer[1] ;
+        Total_x[i] = Total_x[i] >> 4; 
+        int mask = Total_x[i];
+        int val= 0xFFFFF000;
+        Total_x[i] = val | mask;
+    }
+    if (accel_buffer[0] < 128){
+        Total_x[i] = accel_buffer[0];
+        Total_x[i] = Total_x[i] << 8;
+        Total_x[i] = Total_x[i] | accel_buffer[1] ;
+        Total_x[i] = Total_x[i] >> 4;
+    }
+    if (accel_buffer[2]>=128){
+        Total_y[i] = accel_buffer[2];
+        Total_y[i] = Total_y[i] << 8;
+        Total_y[i] = Total_y[i] | accel_buffer[3] ;
+        Total_y[i] = Total_y[i] >> 4; 
+        int mask = Total_y[i];
+        int val= 0xFFFFF000;
+        Total_y[i] = val | mask;
+    }
+    if (accel_buffer[2]<128){
+        Total_y[i] = accel_buffer[2];
+        Total_y[i] = Total_y[i] << 8;
+        Total_y[i] = Total_y[i] | accel_buffer[3] ;
+        Total_y[i] = Total_y[i] >> 4;
+    }
+    if (accel_buffer[4]>=128){
+        Total_z[i] = accel_buffer[4];
+        Total_z[i] = Total_z[i] << 8;
+        Total_z[i] = Total_z[i] | accel_buffer[5] ;
+        Total_z[i] = Total_z[i] >> 4; 
+        int mask = Total_z[i];
+        int val= 0xFFFFF000;
+        Total_z[i] = val | mask;
+    }
+    if (accel_buffer[4]<128){
+        Total_z[i] = accel_buffer[4];
+        Total_z[i] = Total_z[i] << 8;
+        Total_z[i] = Total_z[i] | accel_buffer[5] ;
+        Total_z[i] = Total_z[i] >> 4;
+    }
         char outbuf[80];
         sprintf(outbuf, "X: %02x%01x", accel_buffer[0], accel_buffer[1] >> 4);
         LCD_WriteStringAtPos(outbuf, 0, 0);
@@ -246,8 +295,9 @@ unsigned char ACL_SetRange(unsigned char bRange)
 **	Parameters:
 **      unsigned char *rgRawVals     - Pointer to a buffer where the received bytes will be placed. 
 **      It will contain the 6 bytes, one pair for each of to the 3 axes:
-**                      rgRawVals[0]   - MSB of X reading (X11 X10 X9 X8 X7 X6 X5 X4)
-**                      rgRawVals[1]   - LSB of X reading ( X3  X2 X1 X0  0  0  0  0)
+**                      rgRawVals[0] = Total_x[0] - MSB of X reading (X11 X10 X9 X8 X7 X6 X5 X4)
+ * Total_x[0] <<4<< 
+**                      rgRawVals[1] >>4  - LSB of X reading ( X3  X2 X1 X0  0  0  0  0)
 **                      rgRawVals[2]   - MSB of Y reading (Y11 Y10 Y9 Y8 Y7 Y6 Y5 Y4)
 **                      rgRawVals[3]   - LSB of Y reading ( Y3  Y2 Y1 Y0  0  0  0  0)
 **                      rgRawVals[4]   - MSB of Z reading (Z11 Z10 Z9 Z8 Z7 Z6 Z5 Z4)

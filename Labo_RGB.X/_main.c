@@ -8,6 +8,7 @@
 #include <sys/attribs.h>
 #include "config.h"
 #include <string.h>
+#include <stdio.h>
 
 // Since the flag is changed within an interrupt, we need the keyword volatile.
 static volatile int timer_1m = 0;
