@@ -63,6 +63,13 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #include "accel.h"
 #include "lcd.h"
 #include "app_commands.h"
+
+
+//Moyenne est faite direct sur la MX3 (GestionMoyenne dans accel.c)
+//La switch qui fait afficher Moyenne sur le LCD dans accel.C
+
+
+
 // *****************************************************************************
 // *****************************************************************************
 // Section: Global Data Definitions
@@ -101,18 +108,30 @@ MAIN_DATA mainData;
 // *****************************************************************************
 // *****************************************************************************
 
+int Intense[3];
+int Last_Intense[3];
 
 /* Application's LED Task Function 
  Fonction qui fait clignoter une LED la LED1 à chaque 20000 execution du code
  */
 static unsigned long int counter=0;
-static void LedTask(void) {
+static void LedTask(void) 
+{
     if(counter++ == 20000){
         LED_ToggleValue(1);
         counter = 0;
     }  
 }
 
+void Interupt_ACL_Init(void)
+{
+    IFS0bits.INT4IF = 0;
+    IEC0bits.INT4IE = 1;
+    IPC4bits.INT4IP = 1;
+    IPC4bits.INT4IS = 0;
+    INTCONbits.INT4EP = 0;
+    INT4Rbits.INT4R = 12;    //assigner le Interupt au boutton C en mettant 4, quand ca va être ok mettre 12
+}
 
 static bool sw0_old; 
 void ManageSwitches()
@@ -130,8 +149,15 @@ void ManageSwitches()
 
 void RGB_Task()
 {
-    //Vous devez coder une fonction qui utilise les valeur des moyennes calculé 
-    //et faire varier la couleur de la RGB. 
+    //if(timer_1m) {               // Interruption à chaque 1 ms
+        //timer_1m = 0;            // Reset the compteur to capture the next event
+        //Toute pour la Moyenne fait directement dans la MX3 avec la fonction GestionMoyenne dans accel.c
+        Intense[0] = abs((MoyenneX*255)/2096);
+        Intense[1] = abs((MoyenneY*255)/2096);
+        Intense[2] = abs((MoyenneZ*255)/2096);
+
+        RGBLED_SetValue(Intense[0], Intense[1], Intense[2]); 
+    //}
 }
 
 
@@ -151,6 +177,7 @@ void RGB_Task()
 
 void MAIN_Initialize ( void )
 {
+     
     /* Place the App state machine in its initial state. */
     mainData.state = MAIN_STATE_INIT;
 
@@ -160,7 +187,12 @@ void MAIN_Initialize ( void )
     LCD_Init(); // Initialisation de l'écran LCD
     ACL_Init(); // Initialisation de l'accéléromètre
     SSD_Init(); // Initialisation du Timer4 et de l'accéléromètre
-
+    Interupt_ACL_Init(); //Initialisation de l'interuption de l'accéléromètre
+    RGBLED_Init();
+    Init_GestionDonnees();
+    //initialize_timer_interrupt();
+    //macro_enable_interrupts();
+    
 }
 
 
@@ -208,6 +240,7 @@ void MAIN_Tasks ( void )
         {
             LedTask(); //toggle LED1 à tout les 500000 cycles
             accel_tasks(); // 
+            RGB_Task();
             UDP_Tasks();
             ManageSwitches();
         	JB1Toggle();

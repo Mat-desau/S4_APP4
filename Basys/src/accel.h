@@ -31,6 +31,10 @@
 #define ACL_XYZDATACFG      0x0E 
 
 // function prototypes
+void GestionDonnees();
+void Init_GestionDonnees();
+void GestionMoyenne();
+
 void ACL_Init();
 void accel_tasks();
 void ACL_ReadRawValues(unsigned char *rgRawVals);
@@ -53,6 +57,17 @@ unsigned char I2C_Read(unsigned char slaveAddress,
 
 
 extern bool accel_data_ready;
+
+extern char accel_tableau_X[160];
+extern char accel_tableau_Y[160];
+extern char accel_tableau_Z[160];
+//extern int accel_tableau_int_X[40];
+//extern int accel_tableau_int_Y[40];
+//extern int accel_tableau_int_Z[40];
+extern int MoyenneX;
+extern int MoyenneY;
+extern int MoyenneZ;
+extern char Tram_Send[4];
 
 #define accel_buf_length 6
 extern uint8_t accel_buffer[accel_buf_length];

@@ -16,6 +16,7 @@ void __ISR(_TIMER_1_VECTOR, IPL2AUTO) Timer1ISR(void) {
    timer_1m = 1;           //    Indique à la boucle principale qu'on doit traiter
    IFS0bits.T1IF = 0;      //    clear interrupt flag
 }
+
 #define TMR_TIME    0.001             // x us for each tick
 void initialize_timer_interrupt(void) { 
   T1CONbits.TCKPS = 3;                //    256 prescaler value
@@ -30,6 +31,7 @@ void initialize_timer_interrupt(void) {
   IEC0bits.T1IE = 1;                  //    enable interrupt
   T1CONbits.ON = 1;                   //    turn on Timer5
 } 
+
 void init(){
     LCD_Init();
     RGBLED_Init();
@@ -69,7 +71,7 @@ void main() {
                     sprintf(text,"%d",intensite);
                     LCD_WriteStringAtPos(text, 1, 0);
                     // AFFICHER LA DEL ROUGE
-                    
+                    RGBLED_SetValue(intensite, 0, 0);
                 }
                 
                 if (SWT_GetValue(0) == 1) {    
@@ -79,7 +81,7 @@ void main() {
                         LCD_WriteStringAtPos(text, 1, 0);
                         RGB = 1;
                         // AFFICHER LA DEL ROUGE
-                        
+                        RGBLED_SetValue(intensite, 0, 0);
                     }
                     else if (RGB == 1) {
                         LCD_WriteStringAtPos("Verte", 0, 0);
@@ -87,7 +89,7 @@ void main() {
                         LCD_WriteStringAtPos(text, 1, 0);
                         RGB = 2;
                         // AFFICHER LA DEL VERTE
-                        
+                        RGBLED_SetValue(0, intensite, 0);
                     }
                     else if (RGB == 2) {
                         LCD_WriteStringAtPos("Bleue", 0, 0);
@@ -95,7 +97,7 @@ void main() {
                         LCD_WriteStringAtPos(text, 1, 0);
                         RGB = 3;
                         // AFFICHER LA DEL BLEUE
-                        
+                        RGBLED_SetValue(0, 0, intensite);
                     }                
                     else {
                         RGBLED_SetValue(intensite, intensite, intensite);

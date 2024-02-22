@@ -97,7 +97,6 @@ void RGBLED_Timer5Setup()
   IEC0bits.T5IE = 1;                  //    enable interrupt
   T5CONbits.ON = 1;                   //    turn on Timer5
   macro_enable_interrupts();          //    enable interrupts at CPU
-  
 }
 
 /* ------------------------------------------------------------ */
