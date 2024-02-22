@@ -120,7 +120,7 @@ void ACL_ConfigurePins()
 
 uint16_t count= 0;
 uint16_t count_send = 0;
-int count_8 = 0;
+int count_16 = 0;
 uint16_t count_40 = 0;
 uint16_t count_tableau = 0;
 
@@ -146,7 +146,7 @@ void GestionMoyenne()
     NombreY = 0;
     NombreZ = 0;
     
-    for(i = count_8; i < (count_8+8); i++)
+    for(i = count_16; i < (count_16+16); i++)
     {
         NombreX += accel_tableau_int_X[i];
         NombreY += accel_tableau_int_Y[i];
@@ -158,11 +158,11 @@ void GestionMoyenne()
     MoyenneZ = (NombreZ + MoyenneZ)/9;
     
     count_40++;
-    count_8++;
+    count_16++;
     
-    if(count_8 == 31)
+    if(count_16 == 23)
     {
-        count_8 = 0;
+        count_16 = 0;
     }
     
     if(count_40 == 40)
@@ -236,10 +236,30 @@ void accel_tasks()
         }   
         
     char outbuf[80];
+    
+    if(!SWITCH7StateGet())
+    {
+        sprintf(outbuf, "X: %02x%01x", accel_buffer[0], accel_buffer[1] >> 4);
+        LCD_WriteStringAtPos(outbuf, 0, 0);
+        sprintf(outbuf, "Y: %02x%01x Z: %02x%01x", accel_buffer[2], accel_buffer[3] >> 4, accel_buffer[4], accel_buffer[5] >> 4);
+        LCD_WriteStringAtPos(outbuf, 1, 0);  
+    }
+    if(SWITCH7StateGet())
+    {
+        LCD_WriteStringAtPos("               ", 0, 0);
+        LCD_WriteStringAtPos("               ", 1, 0);
+        sprintf(outbuf, "X: %d", MoyenneX);
+        LCD_WriteStringAtPos(outbuf, 0, 0);
+        sprintf(outbuf, "Y: %d Z: %d", MoyenneY, MoyenneZ);
+        LCD_WriteStringAtPos(outbuf, 1, 0);
+    }
+    
+    /*
     sprintf(outbuf, "X: %02x%01x", accel_buffer[0], accel_buffer[1] >> 4);
     LCD_WriteStringAtPos(outbuf, 0, 0);
     sprintf(outbuf, "Y: %02x%01x Z: %02x%01x", accel_buffer[2], accel_buffer[3] >> 4, accel_buffer[4], accel_buffer[5] >> 4);
-    LCD_WriteStringAtPos(outbuf, 1, 0);
+    LCD_WriteStringAtPos(outbuf, 1, 0);  
+     */
     SSD_WriteDigitsGrouped(count++, 0x1);
     
     GestionDonnees();

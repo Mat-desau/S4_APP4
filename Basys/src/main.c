@@ -102,6 +102,7 @@ MAIN_DATA mainData;
 // *****************************************************************************
 
 int Intense[3];
+int Last_Intense[3];
 
 /* Application's LED Task Function 
  Fonction qui fait clignoter une LED la LED1 à chaque 20000 execution du code
@@ -142,22 +143,35 @@ void ManageSwitches()
 
 void RGB_Task()
 {
-    
     Intense[0] = (MoyenneX*255)/2096;
     Intense[1] = (MoyenneY*255)/2096;
     Intense[2] = (MoyenneZ*255)/2096;
     
     if(Intense[0] <= 0)
     {
-        Intense[0] = 0;
+        Intense[0] = Last_Intense[0];
     }
+    else
+    {
+      Last_Intense[0] = Intense[0];  
+    }
+    
     if(Intense[1] <= 0)
     {
-        Intense[1] = 0;
+        Intense[1] = Last_Intense[1];
     }
+    else
+    {
+      Last_Intense[0] = Intense[0];  
+    }
+    
     if(Intense[2] <= 0)
     {
-        Intense[2] = 0;
+        Intense[2] = Last_Intense[2];
+    }
+    else
+    {
+      Last_Intense[0] = Intense[0];  
     }
             
     RGBLED_SetValue(Intense[0], Intense[1], Intense[2]);
