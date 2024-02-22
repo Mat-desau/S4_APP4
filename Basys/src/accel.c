@@ -63,6 +63,10 @@ uint8_t accel_buffer[accel_buf_length]; //the buffer for reading the acceleratio
 int MoyenneX = 0;
 int MoyenneY = 0;
 int MoyenneZ = 0;
+int NombreX = 0;
+int NombreY = 0;
+int NombreZ = 0;
+signed int accelX2, accelY2, accelZ2; 
 
 
 char accel_tableau_X[160];
@@ -116,7 +120,7 @@ void ACL_ConfigurePins()
 
 uint16_t count= 0;
 uint16_t count_send = 0;
-uint16_t count_8 = 0;
+int count_8 = 0;
 uint16_t count_40 = 0;
 uint16_t count_tableau = 0;
 
@@ -131,34 +135,50 @@ void Init_GestionDonnees()
     
 }
 
-void GestionDonnees()
+void GestionMoyenne()
 {
-    signed int accelX2, accelY2, accelZ2; 
-    accelX2 = ((signed int) accel_buffer[0]<<24)>>20  | accel_buffer[1] >> 4; //VR
-    accelY2 = ((signed int) accel_buffer[2]<<24)>>20  | accel_buffer[3] >> 4; //VR
-    accelZ2 = ((signed int) accel_buffer[4]<<24)>>20  | accel_buffer[5] >> 4; //VR
-    
     accel_tableau_int_X[count_40] = accelX2;
     accel_tableau_int_Y[count_40] = accelY2;
     accel_tableau_int_Z[count_40] = accelZ2;
-    count_40++;
-    count_8++;
     
-    int i = count_8;
-    int NombreX = 0;
-    int NombreY = 0;
-    int NombreZ = 0;
+    int i = 0;
+    NombreX = 0;
+    NombreY = 0;
+    NombreZ = 0;
     
-    for(i; i < (count_8+8); i++)
+    for(i = count_8; i < (count_8+8); i++)
     {
-        NombreX = NombreX + accel_tableau_int_X[i];
-        NombreY = NombreY + accel_tableau_int_Y[i];
-        NombreZ = NombreZ + accel_tableau_int_Z[i];
+        NombreX += accel_tableau_int_X[i];
+        NombreY += accel_tableau_int_Y[i];
+        NombreZ += accel_tableau_int_Z[i];
     }
     
     MoyenneX = (NombreX + MoyenneX)/9;
     MoyenneY = (NombreY + MoyenneY)/9;
     MoyenneZ = (NombreZ + MoyenneZ)/9;
+    
+    count_40++;
+    count_8++;
+    
+    if(count_8 == 31)
+    {
+        count_8 = 0;
+    }
+    
+    if(count_40 == 40)
+    {
+        count_40 = 0;
+    }
+}
+
+void GestionDonnees()
+{
+    //signed int accelX2, accelY2, accelZ2; 
+    accelX2 = ((signed int) accel_buffer[0]<<24)>>20  | accel_buffer[1] >> 4; //VR
+    accelY2 = ((signed int) accel_buffer[2]<<24)>>20  | accel_buffer[3] >> 4; //VR
+    accelZ2 = ((signed int) accel_buffer[4]<<24)>>20  | accel_buffer[5] >> 4; //VR
+    
+    GestionMoyenne();
     
     accel_tableau_X[count_tableau] = (accelX2 >> 24);
     accel_tableau_Y[count_tableau] = (accelY2 >> 24);
@@ -192,16 +212,6 @@ void GestionDonnees()
     
     
     UDP_Send_Packet = true;
-    
-    if(count_8 == 31)
-    {
-        count_8 = 0;
-    }
-    
-    if(count_40 == 40)
-    {
-        count_40 = 0;
-    }
     
     if(count_tableau == 160)
     {

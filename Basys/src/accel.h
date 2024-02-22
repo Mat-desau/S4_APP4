@@ -33,6 +33,7 @@
 // function prototypes
 void GestionDonnees();
 void Init_GestionDonnees();
+void GestionMoyenne();
 
 void ACL_Init();
 void accel_tasks();
@@ -60,6 +61,9 @@ extern bool accel_data_ready;
 extern char accel_tableau_X[160];
 extern char accel_tableau_Y[160];
 extern char accel_tableau_Z[160];
+//extern int accel_tableau_int_X[40];
+//extern int accel_tableau_int_Y[40];
+//extern int accel_tableau_int_Z[40];
 extern int MoyenneX;
 extern int MoyenneY;
 extern int MoyenneZ;

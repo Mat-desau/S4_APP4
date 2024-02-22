@@ -8,6 +8,7 @@
 #include <sys/attribs.h>
 #include "config.h"
 #include <string.h>
+#include <stdio.h>
 
 // Since the flag is changed within an interrupt, we need the keyword volatile.
 static volatile int timer_1m = 0;
@@ -68,7 +69,7 @@ void main() {
                     sprintf(text,"%d",intensite);
                     LCD_WriteStringAtPos(text, 1, 0);
                     // AFFICHER LA DEL ROUGE
-                    
+                    RGBLED_SetValue(intensite, 0, 0);
                 }
                 
                 if (SWT_GetValue(0) == 1) {    
@@ -78,7 +79,7 @@ void main() {
                         LCD_WriteStringAtPos(text, 1, 0);
                         RGB = 1;
                         // AFFICHER LA DEL ROUGE
-                        
+                        RGBLED_SetValue(intensite, 0, 0);
                     }
                     else if (RGB == 1) {
                         LCD_WriteStringAtPos("Verte", 0, 0);
@@ -86,7 +87,7 @@ void main() {
                         LCD_WriteStringAtPos(text, 1, 0);
                         RGB = 2;
                         // AFFICHER LA DEL VERTE
-                        
+                        RGBLED_SetValue(0, intensite, 0);
                     }
                     else if (RGB == 2) {
                         LCD_WriteStringAtPos("Bleue", 0, 0);
@@ -94,7 +95,7 @@ void main() {
                         LCD_WriteStringAtPos(text, 1, 0);
                         RGB = 3;
                         // AFFICHER LA DEL BLEUE
-                        
+                        RGBLED_SetValue(0, 0, intensite);
                     }                
                     else {
                         RGBLED_SetValue(intensite, intensite, intensite);

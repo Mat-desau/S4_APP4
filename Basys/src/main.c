@@ -101,6 +101,7 @@ MAIN_DATA mainData;
 // *****************************************************************************
 // *****************************************************************************
 
+int Intense[3];
 
 /* Application's LED Task Function 
  Fonction qui fait clignoter une LED la LED1 à chaque 20000 execution du code
@@ -141,7 +142,26 @@ void ManageSwitches()
 
 void RGB_Task()
 {
-    RGBLED_SetValue((MoyenneX/2096)*255, (MoyenneY/2096)*255, (MoyenneZ/2096)*255);
+    
+    Intense[0] = (MoyenneX*255)/2096;
+    Intense[1] = (MoyenneY*255)/2096;
+    Intense[2] = (MoyenneZ*255)/2096;
+    
+    if(Intense[0] <= 0)
+    {
+        Intense[0] = 0;
+    }
+    if(Intense[1] <= 0)
+    {
+        Intense[1] = 0;
+    }
+    if(Intense[2] <= 0)
+    {
+        Intense[2] = 0;
+    }
+            
+    RGBLED_SetValue(Intense[0], Intense[1], Intense[2]);
+    
     //Vous devez coder une fonction qui utilise les valeur des moyennes calculé 
     //et faire varier la couleur de la RGB. 
 }
@@ -175,8 +195,8 @@ void MAIN_Initialize ( void )
     ACL_Init(); // Initialisation de l'accéléromètre
     SSD_Init(); // Initialisation du Timer4 et de l'accéléromètre
     Interupt_ACL_Init(); //Initialisation de l'interuption de l'accéléromètre
+    RGBLED_Init();
     Init_GestionDonnees();
-
 }
 
 
@@ -224,6 +244,7 @@ void MAIN_Tasks ( void )
         {
             LedTask(); //toggle LED1 à tout les 500000 cycles
             accel_tasks(); // 
+            RGB_Task();
             UDP_Tasks();
             ManageSwitches();
         	JB1Toggle();
