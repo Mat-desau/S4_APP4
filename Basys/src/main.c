@@ -152,9 +152,36 @@ void RGB_Task()
     //if(timer_1m) {               // Interruption à chaque 1 ms
         //timer_1m = 0;            // Reset the compteur to capture the next event
         //Toute pour la Moyenne fait directement dans la MX3 avec la fonction GestionMoyenne dans accel.c
-        Intense[0] = abs((MoyenneX*255)/2096);
-        Intense[1] = abs((MoyenneY*255)/2096);
-        Intense[2] = abs((MoyenneZ*255)/2096);
+        Intense[0] = (MoyenneX*255)/2096;
+        Intense[1] = (MoyenneY*255)/2096;
+        Intense[2] = (MoyenneZ*255)/2096;
+
+        if(Intense[0] <= 0)
+        {
+            Intense[0] = Last_Intense[0];
+        }
+        else
+        {
+          Last_Intense[0] = Intense[0];  
+        }
+
+        if(Intense[1] <= 0)
+        {
+            Intense[1] = Last_Intense[1];
+        }
+        else
+        {
+          Last_Intense[0] = Intense[0];  
+        }
+
+        if(Intense[2] <= 0)
+        {
+            Intense[2] = Last_Intense[2];
+        }
+        else
+        {
+          Last_Intense[0] = Intense[0];  
+        }
 
         RGBLED_SetValue(Intense[0], Intense[1], Intense[2]); 
     //}
