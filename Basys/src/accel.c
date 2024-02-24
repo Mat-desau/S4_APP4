@@ -93,7 +93,7 @@ void ACL_Init()
     ACL_SetRegister(ACL_CTRL_REG4, 1);        
     ACL_SetRegister(ACL_CTRL_REG5, 0);        
     ACL_GetRegister(ACL_INT_SOURCE);
-    ACL_SetRegister(ACL_CTRL_REG1, 0x39); 
+    ACL_SetRegister(ACL_CTRL_REG1, 0x09); 
 }
 
 /* ------------------------------------------------------------ */
@@ -120,7 +120,7 @@ void ACL_ConfigurePins()
 
 uint16_t count= 0;
 uint16_t count_send = 0;
-uint16_t count_16 = 0;
+uint16_t count_8 = 0;
 uint16_t count_40 = 0;
 uint16_t count_tableau = 0;
 
@@ -146,23 +146,23 @@ void GestionMoyenne()
     NombreY = 0;
     NombreZ = 0;
     
-    for(i = count_16; i < (count_16+16); i++)
+    for(i = count_8; i < (count_8+8); i++)
     {
         NombreX += accel_tableau_int_X[i];
         NombreY += accel_tableau_int_Y[i];
         NombreZ += accel_tableau_int_Z[i];
     }
     
-    MoyenneX = (NombreX + MoyenneX)/16;
-    MoyenneY = (NombreY + MoyenneY)/16;
-    MoyenneZ = (NombreZ + MoyenneZ)/16;
+    MoyenneX = (NombreX + MoyenneX)/8;
+    MoyenneY = (NombreY + MoyenneY)/8;
+    MoyenneZ = (NombreZ + MoyenneZ)/8;
     
     count_40++;
-    count_16++;
+    count_8++;
     
-    if(count_16 == 23)
+    if(count_8 == 31)
     {
-        count_16 = 0;
+        count_8 = 0;
     }
     
     if(count_40 == 40)
