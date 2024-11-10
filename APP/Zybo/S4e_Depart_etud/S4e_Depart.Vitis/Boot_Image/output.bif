@@ -1,0 +1,6 @@
+//arch = zynq; split = false; format = BIN
+the_ROM_image:
+{
+	[bootloader]C:\Users\jbm\Desktop\mat_pedago\S4e_APP4\S4e_Depart\S4e_Depart.Vitis\main_design_wrapper\zynq_fsbl\fsbl.elf
+	C:\Users\jbm\Desktop\mat_pedago\S4e_APP4\S4e_Depart\S4e_Depart.Vitis\S4e_code\_ide\bitstream\download.bit
+}
